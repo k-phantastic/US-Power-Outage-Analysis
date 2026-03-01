@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>US Power Outage Analysis - Home</title>
+    <!-- Google Fonts: Inter for a clean, modern look -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="main.css">
+</head>
+
+<body>
+
+    <main class="container">
+        <h1>Welcome to the US Power Outage Analysis Project</h1>
+        <p>This project analyzes a comprehensive dataset of power outages across the United States, utilizing data
+            sourced from Purdue University.</p>
+
+        <div class="card">
+            <h2>About the Project</h2>
+            <p>Our dashboard and analysis aim to uncover underlying trends, seasonal patterns, and geographical
+                distributions of power grid disturbances. We examine how different factors contribute to these outages
+                and their overall impact.</p>
+            <a href="analysis.html" class="btn">View Analysis</a>
+        </div>
+
+        <div class="card">
+            <h2>Hypothesis Testing</h2>
+            <p>Our Exploratory Data Analysis (EDA) indicates that different causes may lead to varying outage durations.
+                To determine if this difference is statistically significant, we designed the following test:</p>
+
+            <div class="hypothesis-box">
+                <p><strong>Null Hypothesis (H₀):</strong> The distribution of outage durations is the same for outages
+                    caused by <em>severe weather</em> and <em>equipment failure</em>. Any observed difference is simply
+                    due to random chance.</p>
+                <p><strong>Alternative Hypothesis (H₁):</strong> Outages caused by <em>severe weather</em> have a longer
+                    average duration than those caused by <em>equipment failure</em>.</p>
+                <p><strong>Test Statistic:</strong> Difference in group means (Mean Duration of Severe Weather − Mean
+                    Duration of Equipment Failure).</p>
+            </div>
+        </div>
+    </main>
+
+    <!-- The Navigation Bar is dynamically injected into the page via main.js -->
+    <script src="main.js"></script>
+</body>
+
+</html>

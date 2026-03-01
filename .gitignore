@@ -209,3 +209,4 @@ __marimo__/
 # Local files
 final.pdf
 template.ipynb
+.DS_Store
