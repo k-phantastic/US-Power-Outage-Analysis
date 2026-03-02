@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', () => {
         <nav class="navbar">
             <div class="nav-brand">Power Outage Analysis</div>
             <ul class="nav-links">
-                <li><a href="main.html" id="nav-home">Home</a></li>
+                <li><a href="index.html" id="nav-home">Home</a></li>
                 <li><a href="analysis.html" id="nav-analysis">Analysis</a></li>
                 <li><a href="#" id="nav-github" target="_blank">GitHub</a></li>
             </ul>
