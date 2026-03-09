@@ -1,12 +1,12 @@
 ---
 title: Conclusion
 nav_order: 4
-permalink: /US-Power-Outage-Analysis/conclusion/
+permalink: /conclusion/
 ---
 
 # Conclusion
 
- Major insights from the project, key limitations, and the next steps you would take.
+ Major insights from the project, key limitations, and the next steps you would take. Fairness analysis
 
 ## Next steps
 

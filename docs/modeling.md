@@ -1,7 +1,7 @@
 ---
 title: Modeling
 nav_order: 3
-permalink: /US-Power-Outage-Analysis/modeling/
+permalink: /modeling/
 ---
 
 # Modeling
