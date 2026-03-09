@@ -1,6 +1,7 @@
 ---
 title: Conclusion
 nav_order: 4
+permalink: /US-Power-Outage-Analysis/conclusion/
 ---
 
 # Conclusion

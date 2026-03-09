@@ -6,7 +6,7 @@ url: https://khanhphan.com
 baseurl: /US-Power-Outage-Analysis
 
 color_scheme: power-outage
-search_enabled: true
+search_enabled: false
 heading_anchors: true
 nav_sort: case_insensitive
 back_to_top: true
@@ -14,9 +14,7 @@ back_to_top_text: "Back to top"
 footer_content: ""
 
 aux_links:
-  Live Site:
-    - "https://khanhphan.com/US-Power-Outage-Analysis/"
-
+  GitHub Repository: https://github.com/k-phantastic/US-Power-Outage-Analysis
 collections:
   pages:
     permalink: "/:path/"

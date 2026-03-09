@@ -4,7 +4,9 @@
   border-radius: 18px;
   padding: 2rem;
   margin-bottom: 2rem;
-  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04), 0 12px 32px rgba(15, 23, 42, 0.05);
+  box-shadow:
+    0 1px 2px rgba(15, 23, 42, 0.04),
+    0 12px 32px rgba(15, 23, 42, 0.05);
 }
 
 .project-kicker {
@@ -45,7 +47,9 @@
   border: 1px solid #e2e8f0;
   border-radius: 16px;
   padding: 1.5rem;
-  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04), 0 8px 24px rgba(15, 23, 42, 0.04);
+  box-shadow:
+    0 1px 2px rgba(15, 23, 42, 0.04),
+    0 8px 24px rgba(15, 23, 42, 0.04);
 }
 
 .project-card h3 {
@@ -89,17 +93,78 @@
   border: 1px solid #e2e8f0;
 }
 
-.site-title {
-  font-weight: 800;
-  letter-spacing: -0.02em;
+/* Just the Docs overrides */
+
+.side-bar {
+  background: #ffffff;
+  border-right: 1px solid #e6ebf2;
 }
 
-.navigation-list-link {
+.site-header {
+  padding-top: 1rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 0;
+}
+
+.site-title {
+  font-weight: 800;
+  font-size: 1.1rem;
+  letter-spacing: -0.02em;
+  color: #0f172a;
+}
+
+.search-input-wrap,
+.search-input {
+  border-radius: 12px;
+}
+
+.search-input {
+  background: #fbfdff;
+  border: 1px solid #e6ebf2;
+  box-shadow: none;
+}
+
+.nav-list .nav-list-link {
+  border-radius: 10px;
+  padding: 0.55rem 0.85rem;
+  color: #334155;
   font-weight: 600;
 }
 
-.side-bar {
-  border-right: 1px solid #e2e8f0;
+.nav-list .nav-list-link:hover {
+  background: #f8fbff;
+  color: #2563eb;
+}
+
+.nav-list .nav-list-link.active {
+  background: #eff6ff;
+  color: #2563eb;
+}
+
+.main-content-wrap {
+  max-width: 980px;
+}
+
+.main-content {
+  color: #334155;
+}
+
+.main-content h1,
+.main-content h2,
+.main-content h3 {
+  color: #0f172a;
+}
+
+@media (min-width: 50rem) {
+  .side-bar {
+    width: 280px;
+  }
+
+  .site-header,
+  .site-nav {
+    width: 280px;
+    max-width: 280px;
+  }
 }
 
 @media (max-width: 800px) {

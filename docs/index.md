@@ -16,7 +16,7 @@ nav_order: 1
   </div>
 </div>
 
-<div class="stats-grid mb-8">
+<!-- <div class="stats-grid mb-8">
   <div class="stat-card">
     <div class="stat-label">Focus</div>
     <div class="stat-value">EDA + Testing</div>
@@ -29,7 +29,7 @@ nav_order: 1
     <div class="stat-label">Style</div>
     <div class="stat-value">Report / Docs</div>
   </div>
-</div>
+</div> -->
 
 ## About the Project
 {: #project-structure }

@@ -1,6 +1,7 @@
 ---
 title: Analysis
 nav_order: 2
+permalink: /US-Power-Outage-Analysis/analysis/
 ---
 
 # Analysis
