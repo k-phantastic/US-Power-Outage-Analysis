@@ -1,0 +1,39 @@
+title: US Power Outage Analysis
+description: Exploratory analysis, hypothesis testing, and modeling for U.S. power outage data.
+theme: just-the-docs
+
+url: https://khanhphan.com
+baseurl: /US-Power-Outage-Analysis
+
+color_scheme: power-outage
+search_enabled: true
+heading_anchors: true
+nav_sort: case_insensitive
+back_to_top: true
+back_to_top_text: "Back to top"
+footer_content: ""
+
+aux_links:
+  Live Site:
+    - "https://khanhphan.com/US-Power-Outage-Analysis/"
+
+collections:
+  pages:
+    permalink: "/:path/"
+    output: true
+
+just_the_docs:
+  collections:
+    pages:
+      name: More pages
+
+defaults:
+  - scope:
+      path: ""
+      type: pages
+    values:
+      layout: default
+  - scope:
+      path: ""
+    values:
+      layout: default
