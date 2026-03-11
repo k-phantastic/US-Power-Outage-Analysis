@@ -12,7 +12,6 @@ nav_sort: case_insensitive
 back_to_top: true
 back_to_top_text: "Back to top"
 footer_content: "Brought to you by Layth Marabeh, Khanh Phan, and Danny Xia"
-last_edit_timestamp: true
 
 aux_links:
   GitHub Repository: https://github.com/k-phantastic/US-Power-Outage-Analysis
