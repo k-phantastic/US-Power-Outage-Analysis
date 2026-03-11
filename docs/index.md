@@ -99,23 +99,23 @@ The raw outage data required substantial cleaning before analysis. As the raw Ex
 2. **Fixing Data Types** Reestablished datetime columns, integers, and floats from default object typing
 3. **Date and Time Combination** Combined `OUTAGE.START.DATE` + `OUTAGE.START.TIME` into `OUTAGE.START`, and `OUTAGE.RESTORATION.DATE` + `OUTAGE.RESTORATION.TIME` into `OUTAGE.RESTORATION`
 4. **Adding Month Names** Converted numerical 1–12 encoding into month abbreviations for EDA readability
-
+<!-- 5. **Remove Outliers** Removed rows with `OUTAGE.DURATION` over 30,000 minutes (roughly 21 days) -->
 As preparation for the model required further imputation and feature engineering, a subsequent round of cleaning was applied:
 
 **Round 2: Model Preparation (Performed after Assessment of Missingness)**
 
-5. **Imputation**
+6. **Imputation**
   - Missing `CLIMATE.REGION` was due to Hawaii and Alaska, imputed as the state name
   - Missing `CAUSE.CATEGORY.DETAIL` was filled based on `CAUSE.CATEGORY` (e.g. `"Other Weather"` for `"severe weather"`)
   - Missing `CUSTOMERS.AFFECTED` was filled with the group median by `CAUSE.CATEGORY`
 
-6. **Row Removal** Dropped rows with missing values in:
+7. **Row Removal** Dropped rows with missing values in:
   - `MONTH` (affected rows contained nonsense/unimputable data)
   - `OUTAGE.DURATION` (our prediction target - never imputed)
   - `RES.PRICE` (few rows, minimal impact)
-7. **Weekend Flag** Created binary `START_ON_WEEKEND` to capture whether service recovery may be affected by reduced weekend staffing
-8. **Season Encoding** Mapped each month to its season (`Winter`, `Spring`, `Summer`, `Fall`)
-9. **Cyclical Month Encoding** Applied `np.sin()`/`np.cos()` transforms to `MONTH` to preserve the cyclical nature of weather patterns across year boundaries
+8. **Weekend Flag** Created binary `START_ON_WEEKEND` to capture whether service recovery may be affected by reduced weekend staffing
+9. **Season Encoding** Mapped each month to its season (`Winter`, `Spring`, `Summer`, `Fall`)
+10. **Cyclical Month Encoding** Applied `np.sin()`/`np.cos()` transforms to `MONTH` to preserve the cyclical nature of weather patterns across year boundaries
 
 Remainder rows found with missing data deemed irrelevant to further analysis or modeling. 
 
