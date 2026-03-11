@@ -7,14 +7,14 @@ has_toc: false
 ---
 
 <nav class="section-nav" aria-label="Section navigation">
-  <a href="#about">About</a>
-  <a href="#analysis">Analysis</a>
-  <a href="#datacleaning">Data Cleaning</a>
+  <a href="#introduction">Introduction</a>
+  <a href="#cleaneda">Data Cleaning and Exploratory Data Analysis</a>
+  <a href="#missingness">Assessment of Missingness</a>
   <a href="#hypothesis">Hypothesis Testing</a>
-  <a href="#featureengineering">Feature Engineering</a>
-  <a href="#modeling">Modeling</a>
+  <a href="#prediction">Framing a Prediction Problem</a>
+  <a href="#baseline">Baseline Model</a>
+  <a href="#finalmodel">Final Model</a>
   <a href="#fairness">Fairness Analysis</a>
-  <a href="#conclusion">Conclusion</a>
   <a href="#references">References</a>
 </nav>
 
@@ -46,8 +46,8 @@ has_toc: false
 
 ---
 
-## About the Project...
-{: #about }
+## Introduction to the Project...
+{: #introduction }
 
 <div class="card-grid">
   <div class="project-card">
@@ -62,8 +62,8 @@ has_toc: false
     <h3><a href="https://engineering.purdue.edu/LASCI/research-data/outages">Outage Dataset</a></h3>
     <p>
       The dataset contains <strong>1,534 rows</strong> for each major outage event and <a href="https://www.sciencedirect.com/science/article/pii/S2352340918307182?via%3Dihub&__cf_chl_tk=MdnOVI97kP2duINlE8U9fYA6BeU0TnrbD6G2yftSNjQ-1773170159-1.0.1.1-mvbTaxvkSMWWLNdmU_9YLsDMDAqRbcfpG7UZwZrk.1o#t0005">55 columns</a>
-      spanning outage event details, regional statistics, climate information, electrical consumption information, and economic indicators for the affected U.S. state.
-      Full data covers from January 2000 through July 2016.
+      spanning outage event details, regional statistics, climate information, consumption information, and economic indicators.
+      Full data covers from January 2000 through July 2016. Selected column features seen <a href=#featureengineering>here</a>. 
     </p>
   </div>
 </div>
@@ -84,15 +84,47 @@ has_toc: false
   </div>
 </div>
 
+---
+
+## Data Cleaning and Exploratory Data Analysis
+{: #cleaneda }
+
+### <center>Data Cleaning</center>
+{: #datacleaning }
+
+The raw outage data required substantial cleaning before analysis. As the raw Excel file had various metadata and cosmetic rows, we loaded only the table to start our processing in pandas. We then utilized pandas `.pipe` in the first round of data cleaning:
+
+**Round 1: Initial Cleaning**
+
+1. **Removing Duplicate Rows** 8 fully duplicate rows removed
+2. **Fixing Data Types** Reestablished datetime columns, integers, and floats from default object typing
+3. **Date and Time Combination** Combined `OUTAGE.START.DATE` + `OUTAGE.START.TIME` into `OUTAGE.START`, and `OUTAGE.RESTORATION.DATE` + `OUTAGE.RESTORATION.TIME` into `OUTAGE.RESTORATION`
+4. **Adding Month Names** Converted numerical 1–12 encoding into month abbreviations for EDA readability
+
+As preparation for the model required further imputation and feature engineering, a subsequent round of cleaning was applied:
+
+**Round 2: Model Preparation**
+
+5. **Imputation**
+  - Missing `CLIMATE.REGION` was due to Hawaii and Alaska, imputed as the state name
+  - Missing `CAUSE.CATEGORY.DETAIL` was filled based on `CAUSE.CATEGORY` (e.g. `"Other Weather"` for `"severe weather"`)
+  - Missing `CUSTOMERS.AFFECTED` was filled with the group median by `CAUSE.CATEGORY`
+
+6. **Row Removal** Dropped rows with missing values in:
+  - `MONTH` (affected rows contained nonsense/unimputable data)
+  - `OUTAGE.DURATION` (our prediction target - never imputed)
+  - `RES.PRICE` (few rows, minimal impact)
+7. **Weekend Flag** Created binary `START_ON_WEEKEND` to capture whether service recovery may be affected by reduced weekend staffing
+8. **Season Encoding** Mapped each month to its season (`Winter`, `Spring`, `Summer`, `Fall`)
+9. **Cyclical Month Encoding** Applied `np.sin()`/`np.cos()` transforms to `MONTH` to preserve the cyclical nature of weather patterns across year boundaries
+
+Remainder rows found with missing data deemed irrelevant to further analysis or modeling. 
 
 ---
 
-## Analysis
-{: #analysis }
-
+### <center>Exploratory Data Analysis</center>
+{: #eda }
 Early exploratory data analysis is shown below through visualizations of the dataset.   
-
-
 
 ### Temporal Analysis: Number of Outages Per Year
 ====================PLACEHOLDER FOR PLOTLY HTML====================
@@ -107,76 +139,94 @@ The number of power outages seem to be heightened around the summer months with 
 ### Geographic Analysis: Number of Outages by Climate Region
 ====================PLACEHOLDER FOR PLOTLY HTML====================
 
-
+Aligning with previous theory on snowstorms having a significant effect on major outage count, we find the Northeast region of the U.S. the most impacted compared to the other specified regions.
 
 ### Geographic Analysis: Top 15 States by Number of Outages
 ====================PLACEHOLDER FOR PLOTLY HTML====================
 
+Aggregating the top 15 states by count of outages, California is in the lead by far at 209 recorded major outages in this dataset, nearly double the next state. 
 
-### Geographic Patterns
-{: #geographic }
+### Bivariate Analysis: Average Outage Duration vs Cause Category
+====================PLACEHOLDER FOR PLOTLY HTML====================
 
-Regional trends.
+====================PLACEHOLDER FOR PLOTLY HTML====================
 
-### Seasonal and Cause-Based Trends
-{: #seasonal }
+Power outages in the dataset are dominated in count by severe weather, but when we look at the longest average power outages, we find that the main contributing cause category is fuel supply emergencies, at almost 5 times more than that of severe weather outages. 
 
-Temporal trends.
+
+### Pivot Table: Average Outage Duration by Cause Category and Climate Region
+<div style="overflow-x: auto; font-size: 0.65rem;">
+  {% include_relative assets/plots/pivot_table.html %}
+</div>
+
+---
+
+## Assessment of Missingness
+{: #missingness }
+====================PLACEHOLDER FOR NMAR ANALYSIS====================
 
 ---
 
 ## Hypothesis Testing
 {: #hypothesis }
 
-Our Exploratory Data Analysis (EDA) indicates that different causes may lead to varying outage durations. To determine if this difference is statistically significant, we designed the following test:
+Our EDA indicates that different causes may lead to varying outage durations. To determine if this difference is statistically significant, we designed the following test:
 
-<div class="hypothesis-box">
-  <p><strong>Null Hypothesis (H₀):</strong> The distribution of outage durations is the same for outages caused by <em>severe weather</em> and <em>equipment failure</em>. Any observed difference is simply due to random chance.</p>
-  <p><strong>Alternative Hypothesis (H₁):</strong> Outages caused by <em>severe weather</em> have a longer average duration than those caused by <em>equipment failure</em>.</p>
-  <p><strong>Test Statistic:</strong> Difference in group means (Mean Duration of Severe Weather − Mean Duration of Equipment Failure).</p>
-</div>
+>**Null Hypothesis (H<sub>0</sub>):** The distribution of outage durations is the same for outages caused by *severe weather* and *equipment failure*. Any observed difference is simply due to random chance.    
+>**Alternative Hypothesis (H<sub>A</sub>):** Outages caused by *severe weather* have a longer average duration than those caused by *equipment failure*.    
+>**Test Statistic:** Difference in group means (Mean Duration of Severe Weather - Mean Duration of Equipment Failure).
 
+====================PLACEHOLDER FOR HYPOTHESIS TEST RESULTS====================
 
 ---
 
-## Modeling
-{: #modeling }
+## Framing a Prediction Problem
+{: #prediction }
+> "Clearly state your prediction problem and type (classification or regression). If you are building a classifier, make sure to state whether you are performing binary classification or multiclass classification. Report the response variable (i.e. the variable you are predicting) and why you chose it, the metric you are using to evaluate your model and why you chose it over other suitable metrics (e.g. accuracy vs. F1-score). Note: Make sure to justify what information you would know at the “time of prediction” and to only train your model using those features. For instance, if we wanted to predict your final exam grade, we couldn’t use your Final Project grade, because the project is only due after the final exam! Feel free to ask questions if you’re not sure."
 
-Comparison of model performance, feature engineering, etc.
+---
 
-### Problem Framing
-{: #problem-framing }
-
-Regression for outage duration.
-
-### Baseline
+## Baseline Model
 {: #baseline }
 
-Basic linear regression.
+====================PLACEHOLDER====================     
+"state the features in your model, including how many are quantitative, ordinal, and nominal, and how you performed any necessary encodings"
+Create table for features used, commentary on leakage columns we excluded. 
+Maybe code snippets on the preprocessing pipelines? OHE etc
 
-### Feature Engineering
-{: #feature-engineering }
 
-Transformed columns, encoded categories, and any external features.
-
-### Evaluation
-{: #evaluation }
-
-results_df
+====================PLACEHOLDER====================     
+Discussion section for baseline model
+Comparison of model performance, feature engineering, etc.
 
 ---
 
-## Conclusion
+
+## Final Model
+{: #finalmodel }
+====================PLACEHOLDER====================
+
+results_df, show what was used, etc. 
+
+---
+
+## Fairness Analysis
+{: #fairness }
+====================PLACEHOLDER====================
+
+Urban vs Rural
+
+### Conclusion
 {: #conclusion }
+====================PLACEHOLDER====================   
 
-Major insights from the project, key limitations, and the next steps you would take. Fairness analysis.
+Major insights from the project, key limitations, and the next steps you would take
 
-### Next Steps
-{: #next-steps }
+---
 
-- Improve forecasting features
-- Compare modeling strategies for skewed duration targets
-- Expand the site with embedded charts and interactive maps
-
+## References
+{: #references }
+====================PLACEHOLDER====================   
+Add in the links used for data source, properly cite etc
 
 {% include scroll.html %}
