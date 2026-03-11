@@ -34,7 +34,7 @@ html {
   scroll-behavior: smooth;
 }
 
-@media (min-width: 66rem) {
+@media (min-width: 80rem) {
   .section-nav {
     display: flex;
   }
@@ -137,4 +137,21 @@ html {
 // Override width, hopefully this doesn't break :(
 .main {
   max-width: 900px;
+}
+
+// Plot selector buttons
+.plot-selector button {
+  padding: 0.3rem 0.75rem;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  background: #ffffff;
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: background 0.2s, color 0.2s;
+}
+
+.plot-selector button.active {
+  background: #eff6ff;
+  color: #2563eb;
+  border-color: #2563eb;
 }
