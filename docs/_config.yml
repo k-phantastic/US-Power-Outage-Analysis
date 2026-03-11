@@ -12,25 +12,3 @@ nav_sort: case_insensitive
 back_to_top: true
 back_to_top_text: "Back to top"
 footer_content: "Brought to you by Layth Marabeh, Khanh Phan, and Danny Xia"
-
-collections:
-  pages:
-    permalink: "/:path/"
-    output: true
-
-just_the_docs:
-  collections:
-    pages:
-      name: More pages
-
-defaults:
-  - scope:
-      path: ""
-      type: pages
-    values:
-      layout: default
-  - scope:
-      path: ""
-    values:
-      layout: default
- 

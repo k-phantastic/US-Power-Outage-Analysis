@@ -39,7 +39,7 @@ has_toc: false
     This project analyzes a comprehensive dataset of power outages across the United States from 2000-2016, using data sourced from Purdue University. Factors driving outage duration are analyzed with the creation of a predictive regression model. 
   </p>
   <div class="hero-actions">
-    <a class="btn btn-primary mr-2 mb-2" href="https://github.com/k-phantastic/US-Power-Outage-Analysis">GitHub Repository</a>
+    <a class="btn btn-primary mr-2 mb-2" href="https://github.com/k-phantastic/US-Power-Outage-Analysis" target="_blank">GitHub Repository</a>
   </div>
 </div>
 
@@ -50,7 +50,7 @@ has_toc: false
 
 <div class="card-grid">
   <div class="project-card">
-    <h3>Problem Identification</h3>
+    <h3><a href="#prediction">Problem Identification</a></h3>
     <p>
       <i>Can we predict the duration of a power outage?</i>
     </p>
@@ -60,7 +60,7 @@ has_toc: false
   <div class="project-card">
     <h3><a href="https://engineering.purdue.edu/LASCI/research-data/outages">Outage Dataset</a></h3>
     <p>
-      The dataset contains <strong>1,534 rows</strong> for each major outage event and <a href="https://www.sciencedirect.com/science/article/pii/S2352340918307182?via%3Dihub&__cf_chl_tk=MdnOVI97kP2duINlE8U9fYA6BeU0TnrbD6G2yftSNjQ-1773170159-1.0.1.1-mvbTaxvkSMWWLNdmU_9YLsDMDAqRbcfpG7UZwZrk.1o#t0005">55 columns</a>
+      The dataset contains <strong>1,534 rows</strong> for each major outage event and <a href="https://www.sciencedirect.com/science/article/pii/S2352340918307182?via%3Dihub&__cf_chl_tk=MdnOVI97kP2duINlE8U9fYA6BeU0TnrbD6G2yftSNjQ-1773170159-1.0.1.1-mvbTaxvkSMWWLNdmU_9YLsDMDAqRbcfpG7UZwZrk.1o#t0005" target="_blank">55 columns</a>
       spanning outage event details, regional statistics, climate information, consumption information, and economic indicators.
       Full data covers from January 2000 through July 2016. Selected column features seen <a href=#featureengineering>here</a>. 
     </p>
@@ -71,15 +71,15 @@ has_toc: false
 <div class="author-grid">
   <div class="project-card">
     <h3>Layth Marabeh</h3>
-    <p>GitHub: <a href="https://github.com/lmarabeh">@lmarabeh</a></p>
+    <p>GitHub: <a href="https://github.com/lmarabeh" target="_blank">@lmarabeh</a></p>
   </div>
   <div class="project-card">
     <h3>Khanh Phan</h3>
-    <p>GitHub: <a href="https://github.com/k-phantastic">@k-phantastic</a></p>
+    <p>GitHub: <a href="https://github.com/k-phantastic" target="_blank">@k-phantastic</a></p>
   </div>
   <div class="project-card">
     <h3>Danny Xia</h3>
-    <p>GitHub: <a href="https://github.com/dannyxia7">@dannyxia7</a></p>
+    <p>GitHub: <a href="https://github.com/dannyxia7" target="_blank">@dannyxia7</a></p>
   </div>
 </div>
 

@@ -1,3 +1,4 @@
+// Navigation sidebar
 .section-nav {
   position: fixed;
   top: 7rem;
@@ -43,6 +44,7 @@ html {
   }
 }
 
+// Hero block and project cards
 .project-hero {
   background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
   border: 1px solid #e2e8f0;
@@ -114,78 +116,12 @@ html {
   border: 1px solid #e2e8f0;
 }
 
-/* Just the Docs overrides */
-
-.side-bar {
-  background: #ffffff;
-  border-right: 1px solid #e6ebf2;
-}
-
-.site-header {
-  padding-top: 1rem;
-  padding-bottom: 0.75rem;
-  border-bottom: 0;
-}
-
-.site-title {
-  font-weight: 800;
-  font-size: 1.1rem;
-  letter-spacing: -0.02em;
-  color: #0f172a;
-}
-
-.search-input-wrap,
-.search-input {
-  border-radius: 12px;
-}
-
-.search-input {
-  background: #fbfdff;
-  border: 1px solid #e6ebf2;
-  box-shadow: none;
-}
-
-.nav-list .nav-list-link {
-  border-radius: 10px;
-  padding: 0.55rem 0.85rem;
-  color: #334155;
-  font-weight: 600;
-}
-
-.nav-list .nav-list-link:hover {
-  background: #f8fbff;
-  color: #2563eb;
-}
-
-.nav-list .nav-list-link.active {
-  background: #eff6ff;
-  color: #2563eb;
-}
-
-.main-content-wrap {
-  max-width: 980px;
-}
-
-.main-content {
-  color: #334155;
-}
-
-.main-content h1,
-.main-content h2,
-.main-content h3 {
-  color: #0f172a;
-}
-
-@media (min-width: 50rem) {
-  .side-bar {
-    width: 280px;
-  }
-
-  .site-header,
-  .site-nav {
-    width: 280px;
-    max-width: 280px;
-  }
+// Collapse empty header space left after removing aux_links
+.main-header {
+  padding: 0 !important;
+  min-height: 0 !important;
+  border-bottom: 0 !important;
+  height: 0 !important;
 }
 
 @media (max-width: 800px) {
@@ -198,3 +134,7 @@ html {
   }
 }
 
+// Override width, hopefully this doesn't break :(
+.main {
+  max-width: 900px;
+}
