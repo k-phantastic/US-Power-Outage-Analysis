@@ -86,6 +86,13 @@ html {
   margin: 1.5rem 0 2rem;
 }
 
+.author-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1.25rem;
+  margin: 1.5rem 0 2rem;
+}
+
 .project-card {
   background: #ffffff;
   border: 1px solid #e2e8f0;
