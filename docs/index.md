@@ -39,8 +39,7 @@ has_toc: false
     This project analyzes a comprehensive dataset of power outages across the United States from 2000-2016, using data sourced from Purdue University. Factors driving outage duration are analyzed with the creation of a predictive regression model. 
   </p>
   <div class="hero-actions">
-    <a class="btn btn-primary mr-2 mb-2" href="#analysis">View Analysis</a>
-    <a class="btn btn-outline mb-2" href="#modeling">View Modeling</a>
+    <a class="btn btn-primary mr-2 mb-2" href="https://github.com/k-phantastic/US-Power-Outage-Analysis">GitHub Repository</a>
   </div>
 </div>
 
