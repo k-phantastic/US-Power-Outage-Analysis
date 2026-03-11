@@ -58,11 +58,11 @@ has_toc: false
     </p>
   </div>
   <div class="project-card">
-    <h3><a href="https://engineering.purdue.edu/LASCI/research-data/outages">Outage Dataset</a></h3>
+    <h3><a href="https://engineering.purdue.edu/LASCI/research-data/outages" target="_blank">Outage Dataset</a></h3>
     <p>
       The dataset contains <strong>1,534 rows</strong> for each major outage event and <a href="https://www.sciencedirect.com/science/article/pii/S2352340918307182?via%3Dihub&__cf_chl_tk=MdnOVI97kP2duINlE8U9fYA6BeU0TnrbD6G2yftSNjQ-1773170159-1.0.1.1-mvbTaxvkSMWWLNdmU_9YLsDMDAqRbcfpG7UZwZrk.1o#t0005" target="_blank">55 columns</a>
       spanning outage event details, regional statistics, climate information, consumption information, and economic indicators.
-      Full data covers from January 2000 through July 2016. Selected column features seen <a href=#featureengineering>here</a>. 
+      Full data covers from January 2000 through July 2016. Selected column features seen <a href="#featureengineering">here</a>. 
     </p>
   </div>
 </div>
@@ -102,7 +102,7 @@ The raw outage data required substantial cleaning before analysis. As the raw Ex
 
 As preparation for the model required further imputation and feature engineering, a subsequent round of cleaning was applied:
 
-**Round 2: Model Preparation**
+**Round 2: Model Preparation (Performed after Assessment of Missingness)**
 
 5. **Imputation**
   - Missing `CLIMATE.REGION` was due to Hawaii and Alaska, imputed as the state name
