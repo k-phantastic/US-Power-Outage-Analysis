@@ -60,7 +60,7 @@ has_toc: false
   <div class="project-card">
     <h3><a href="https://engineering.purdue.edu/LASCI/research-data/outages" target="_blank">Outage Dataset</a></h3>
     <p>
-      The dataset contains <strong>1,534 rows</strong> for each major outage event and <a href="https://www.sciencedirect.com/science/article/pii/S2352340918307182?via%3Dihub&__cf_chl_tk=MdnOVI97kP2duINlE8U9fYA6BeU0TnrbD6G2yftSNjQ-1773170159-1.0.1.1-mvbTaxvkSMWWLNdmU_9YLsDMDAqRbcfpG7UZwZrk.1o#t0005" target="_blank">55 columns</a>
+      The dataset contains <strong>1,534 rows</strong> for each major outage event and <a href="https://www.sciencedirect.com/science/article/pii/S2352340918307182?via%3Dihub#s0015" target="_blank">55 columns</a>
       spanning outage event details, regional statistics, climate information, consumption information, and economic indicators.
       Full data covers from January 2000 through July 2016. Selected column features seen <a href="#featureengineering">here</a>. 
     </p>
@@ -91,7 +91,7 @@ has_toc: false
 ### <center>Data Cleaning</center>
 {: #datacleaning }
 
-The raw outage data required substantial cleaning before analysis. As the raw Excel file had various metadata and cosmetic rows, we loaded only the table to start our processing in pandas. We then utilized pandas `.pipe` in the first round of data cleaning:
+The raw outage data required substantial cleaning before analysis. As the raw Excel file had various metadata and cosmetic rows, we loaded only the table to start our processing in pandas. We then utilized pandas `.pipe()` in the first round of data cleaning:
 
 **Round 1: Initial Cleaning**
 
@@ -302,7 +302,7 @@ At a significance value of 0.05, we fail to reject the null hypothesis; There is
 ## Hypothesis Testing
 {: #hypothesis }
 
-### Comparing Outage Durations by Cause (Permutation Test)
+### Comparing Outage Durations by Cause (Permutation Test, Difference in group means)
 Our EDA indicates that different causes may lead to varying outage durations. To determine if this difference is statistically significant, we look to have our test statistic as difference in group means (as we are comparing tendencies), with a one-sided test as we are looking to compare if one is longer rather than different. 
 
 >**Null Hypothesis (H<sub>0</sub>):** The distribution of outage durations is the same for outages caused by *"severe weather"* and *"equipment failure"*. Any observed difference is simply due to random chance.    
@@ -316,7 +316,7 @@ We consider the conditions of *"severe weather"* and *"equipment failure"* contr
 
 ---
 
-### Climate Categories and Outage Causes (TVD)
+### Climate Categories and Outage Causes (Permutation Test, TVD)
 We have a CLIMATE.CATEGORY column (warm, cold, normal) and a `CAUSE.CATEGORY` column. We can investigate if the types of outages that occur depend on the climate conditions. TVD is appropriate here as `CAUSE.CATEGORY` is a categorical distribution. 
 
 >**Null Hypothesis (H<sub>0</sub>):** The distribution of outage causes is independent of the climate category (warm vs. cold).
@@ -333,6 +333,14 @@ While our permutation test suggested that outage causes are independent of clima
 ## Framing a Prediction Problem
 {: #prediction }
 > "Clearly state your prediction problem and type (classification or regression). If you are building a classifier, make sure to state whether you are performing binary classification or multiclass classification. Report the response variable (i.e. the variable you are predicting) and why you chose it, the metric you are using to evaluate your model and why you chose it over other suitable metrics (e.g. accuracy vs. F1-score). Note: Make sure to justify what information you would know at the “time of prediction” and to only train your model using those features. For instance, if we wanted to predict your final exam grade, we couldn’t use your Final Project grade, because the project is only due after the final exam! Feel free to ask questions if you’re not sure."
+
+Our study so far has lead us in framing our prediction problem as a **regression** task to predict the duration of a a power outage (`OUTAGE.DURATION`), given its early statistics and information when the incident occurs (discussed further detail in [#features](#features)). The duration of an outage provides an actionable metric for utility companies, emergency responders, and especially resident customers. 
+
+At the time of prediction, we will ensure to only use features that would be known when the outage is reported, such as location, date/time, climate conditions, and economic context (aggregated and known prior, specific to region). A key column to avoid is `DEMAND.LOSS.MW`, as it is calculated after restoration and would contribute to data leakage.
+
+
+> **Note from Khanh**: I experienced a significant power outage in San Francisco in December 2025, we had early restoration estimates from PG&E of 6-8 hours, but it ended up being closer to 3 days. In hindsight, had I had better intuition and/or if I had a better estimate, I would've been able to prepare accordingly to have been able to save my refrigerator groceries. 
+
 <div class="plot-figure">
   <iframe
     src="assets/plots/outage_duration_distribution.html"
@@ -341,19 +349,47 @@ While our permutation test suggested that outage causes are independent of clima
     frameborder="0"
   ></iframe>
 </div>
-Commentary on skew
+Given the heavy right skew of power outage durations- with most lasting far less than 48 hours, we apply a `np.log1p` transformation to the target before training. 
+
+**Evaluation Metrics:** We will look to train various regression models and look at key statistics in RMSE (Root Mean Squared Error), MAE (Mean Absolute Error), and R^2 with consideration of both log scale and regular minutes scale for actionable insight.
+- **RMSE** penalizes large prediction errors more heavily, which matters here since dramatically underestimating a long outage is much worse than a small error on a short one.
+- **MAE** provides a more interpretable average prediction error: "on average, how far off are my predictions from the truth". 
+- **R^2** captures how much variance the model explains overall.
 
 ---
 
 ## Baseline Model
+
+{: #features }
+
+### Model Features
+Following our data cleaning and feature engineering, our modeling approach uses 17 features as follows, with description referencing the [original article](https://www.sciencedirect.com/science/article/pii/S2352340918307182?via%3Dihub#s0015): 
+
+| Feature | Type | Description | Intuition |
+|---|---|---|---|
+| `SEASON` | Nominal | Season at time of outage start | Seasonal weather patterns can affect both outage causes and repair response time |
+| `U.S._STATE` | Nominal | State where outage occurred | Regional differences in infrastructure, regulation, etc. |
+| `NERC.REGION` | Nominal | North American Electric Reliability Corporation (NERC) regions | Grid topology and regional reliability standards can affect response |
+| `CLIMATE.REGION` | Nominal | NCEI climate region (nine climatically consistent regions in continental U.S.A.) | Regions prone to extreme weather face can face longer restoration times |
+| `CLIMATE.CATEGORY` | Nominal | Climate episodes corresponding to the years (warm/cold/normal) | El Niño/La Niña years shift weather severity |
+| `CAUSE.CATEGORY` | Nominal | Broad cause of outage | Root cause contributor |
+| `CAUSE.CATEGORY.DETAIL` | Nominal | Granular cause detail | Finer cause detail e.g. a "Thunderstorm" within "severe weather" |
+| `MONTH_SIN`, `MONTH_COS` | Quantitative | Cyclical encoding of month | Preserves the continuity between December and January |
+| `START_ON_WEEKEND` | Quantitative | Binary flag for if outage starts on weekend | Reduced utility staffing on weekends may slow initial response and restoration |
+| `ANOMALY.LEVEL` | Quantitative | Ocean El Niño/La Niña anomaly index (ONI) | Quantifies climate anomaly severity |
+| `CUSTOMERS.AFFECTED` | Quantitative | Number of customers impacted | Larger affected areas typically indicate scale of outage |
+| `RES.PRICE` / `COM.PRICE` / `IND.PRICE` | Quantitative | Residential, commercial, industrial monthly electricity prices | Energy market stress and grid demand pressure at time of outage |
+| `UTIL.CONTRI` | Quantitative | Utility industry contribution to state GDP | States where utilities are a larger economic factor may invest more in rapid restoration |
+| `PI.UTIL.OFUSA` | Quantitative | State utility sector's income of U.S. utility sector's income | Additional reflection of utility scale and resource capacity |
+
+**7 nominal/categorical** features were encoded in the preprocessing pipeline with `OneHotEncoder(handle_unknown='ignore')`   
+**10 quantitative** features were standardized with `StandardScaler()`    
+**Train/Test** split of 80:20 (1159 training rows, 290 test rows)   
+
 {: #baseline }
+### Baseline Model: Linear Regression
 
-====================PLACEHOLDER====================     
-"state the features in your model, including how many are quantitative, ordinal, and nominal, and how you performed any necessary encodings"
-Create table for features used, commentary on leakage columns we excluded. 
-Maybe code snippets on the preprocessing pipelines? OHE etc
-
-
+Upon training and testing a 
 <div class="plot-model">
   <iframe 
     src="assets/plots/linear_regression_residuals.html" 
@@ -378,7 +414,7 @@ Comparison of model performance, feature engineering, etc.
     <button onclick="setPlot(this, 'random_forest_residuals')">Random Forest</button>
     <button onclick="setPlot(this, 'xgboost_optuna_residuals')">XGBoost</button>
     <button onclick="setPlot(this, 'hist_gradient_boosting_residuals')">HGB</button>
-    <button class="active" onclick="setPlot(this, 'advanced_hurdle_model_residuals_tuned')">Advanced Hurdle</button>
+    <button class="active" onclick="setPlot(this, 'advanced_hurdle_model_residuals_tuned')">Advanced Hurdle (FINAL)</button>
   </div>
   <div class="plot-model">
     <iframe
