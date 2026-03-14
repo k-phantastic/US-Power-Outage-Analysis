@@ -196,10 +196,8 @@ Power outages in the dataset are dominated in count by severe weather, but when 
 
 
 ### Pivot Table: Average Outage Duration by Cause Category and Climate Region
-<div style="overflow-x: auto;">
-  <div style="transform: scale(0.75); transform-origin: top left; width: 133%;">
-    {% include_relative assets/plots/pivot_table.html %}
-  </div>
+<div style="transform: scale(0.75); transform-origin: top left; width: 133%;">
+  {% include_relative assets/plots/pivot_table.html %}
 </div>
 
 ---
