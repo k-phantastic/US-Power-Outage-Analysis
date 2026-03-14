@@ -231,7 +231,9 @@ A more educated evaluation would require more domain knowledge regarding the nat
 
 We selected `OUTAGE.DURATION` as the column of focus for further missingness analysis, as it is our target for modeling. We created a binary indicator `duration_missing` and ran permutation tests against two candidate columns: 
 
-####  **Column that missingness of `OUTAGE.DURATION` depends on: `ANOMALY.LEVEL`**
+---
+
+#### **Column that missingness of `OUTAGE.DURATION` depends on: `ANOMALY.LEVEL`**
 
 <div class="plot-figure">
   <iframe
@@ -242,6 +244,8 @@ We selected `OUTAGE.DURATION` as the column of focus for further missingness ana
   ></iframe>
 </div>
 
+At a glance, we find that anomaly levels are heightened when outage durations are omitted in the dataset.
+
 <div class="plot-figure">
   <iframe
     src="assets/plots/duration_missingness_vs_anomaly_level.html"
@@ -251,7 +255,19 @@ We selected `OUTAGE.DURATION` as the column of focus for further missingness ana
   ></iframe>
 </div>
 
-####  **Column that missingness of `OUTAGE.DURATION` does not depend on: `MONTH`**
+We perform a permutation as follows in evaluating missingness dependency: 
+>**Null Hypothesis (H<sub>0</sub>):** The missingness of `OUTAGE.DURATION` is independent of `CLIMATE.REGION`.   
+>**Alternative Hypothesis (H<sub>A</sub>):** The distribution of `ANOMALY.LEVEL` differs in mean in rows where `OUTAGE.DURATION` is missing      
+>**Test Statistic:** Absolute difference in group means of `ANOMALY.LEVEL`    
+
+**Result:** Observed Difference = **0.7100**, p-value < **0.001**
+
+At a significance value of 0.05, we reject the null hypothesis; the missingness of `OUTAGE.DURATION` is associated with `ANOMALY.LEVEL`, potentially suggesting more extreme climate conditions resulting in fewer reported durations.
+
+
+---
+
+#### **Column that missingness of `OUTAGE.DURATION` does not depend on: `MONTH`**
 
 <div class="plot-figure">
   <iframe
@@ -261,6 +277,7 @@ We selected `OUTAGE.DURATION` as the column of focus for further missingness ana
     frameborder="0"
   ></iframe>
 </div>
+With similar setup as previous, we find that distributions are much more similar to each other.
 
 <div class="plot-figure">
   <iframe
@@ -271,18 +288,45 @@ We selected `OUTAGE.DURATION` as the column of focus for further missingness ana
   ></iframe>
 </div>
 
+We perform a permutation as follows in evaluating missingness dependency: 
+>**Null Hypothesis (H<sub>0</sub>):** The missingness of `OUTAGE.DURATION` is independent of `MONTH`.    
+>**Alternative Hypothesis (H<sub>A</sub>):** The distribution of `MONTH` differs between rows where `OUTAGE.DURATION` is missing and rows where it is not.    
+>**Test Statistic:** Total Variation Distance (TVD) between the two `MONTH` distributions.   
+
+**Result:** Observed TVD = **0.2219**, p-value = **0.2470**
+
+At a significance value of 0.05, we fail to reject the null hypothesis; There is no significant evidence of relationship between `MONTH` and missing `OUTAGE.DURATION`. 
+
 ---
 
 ## Hypothesis Testing
 {: #hypothesis }
 
-Our EDA indicates that different causes may lead to varying outage durations. To determine if this difference is statistically significant, we designed the following test:
+### Comparing Outage Durations by Cause (Permutation Test)
+Our EDA indicates that different causes may lead to varying outage durations. To determine if this difference is statistically significant, we look to have our test statistic as difference in group means (as we are comparing tendencies), with a one-sided test as we are looking to compare if one is longer rather than different. 
 
->**Null Hypothesis (H<sub>0</sub>):** The distribution of outage durations is the same for outages caused by *severe weather* and *equipment failure*. Any observed difference is simply due to random chance.    
->**Alternative Hypothesis (H<sub>A</sub>):** Outages caused by *severe weather* have a longer average duration than those caused by *equipment failure*.    
+>**Null Hypothesis (H<sub>0</sub>):** The distribution of outage durations is the same for outages caused by *"severe weather"* and *"equipment failure"*. Any observed difference is simply due to random chance.    
+>**Alternative Hypothesis (H<sub>A</sub>):** Outages caused by *"severe weather"* have a longer average duration than those caused by *"equipment failure"*.    
 >**Test Statistic:** Difference in group means (Mean Duration of Severe Weather - Mean Duration of Equipment Failure).
 
-====================PLACEHOLDER FOR HYPOTHESIS TEST RESULTS====================
+Upon a completed permutation test (n = 1000) and significance value of 0.05, our results are as follows:     
+**Result:** Observed Difference = **2015.98** minutes, P-value < **0.001**  
+
+We consider the conditions of *"severe weather"* and *"equipment failure"* contributing to be statistically significant in the former causing longer average durations than the latter. 
+
+---
+
+### Climate Categories and Outage Causes (TVD)
+We have a CLIMATE.CATEGORY column (warm, cold, normal) and a `CAUSE.CATEGORY` column. We can investigate if the types of outages that occur depend on the climate conditions. TVD is appropriate here as `CAUSE.CATEGORY` is a categorical distribution. 
+
+>**Null Hypothesis (H<sub>0</sub>):** The distribution of outage causes is independent of the climate category (warm vs. cold).
+>**Alternative Hypothesis (H<sub>A</sub>):** The distribution of outage causes depends on the climate category (e.g., certain causes are more likely in cold climates vs. warm climates).   
+>**Test Statistic:** Total Variation Distance (TVD) comparing distributino of `CAUSE.CATEGORY` between warm and cold climate outages
+
+Upon a completed permutation test (n = 1000) and significance value of 0.05, our results are as follows:     
+**Result:** Observed TVD = **0.0646**, P-value = **0.3260**
+
+While our permutation test suggested that outage causes are independent of climate categories, this may be due to the broad nature of the ``CLIMATE.CATEGORY`` variable. Real-world events, like the Texas Power Crisis, suggest that localized extreme weather has a profound impact that might be masked when aggregating data at a national, multi-year level.
 
 ---
 
