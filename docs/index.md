@@ -231,11 +231,16 @@ A more educated evaluation would require more domain knowledge regarding the nat
 
 We selected `OUTAGE.DURATION` as the column of focus for further missingness analysis, as it is our target for modeling. We created a binary indicator `duration_missing` and ran permutation tests against two candidate columns: 
 
-####  **Column that missingness of `OUTAGE.DURATION` depends on: `CLIMATE.REGION`**
+####  **Column that missingness of `OUTAGE.DURATION` depends on: `ANOMALY.LEVEL`**
 
-
-####  **Column that missingness of `OUTAGE.DURATION` does not depend on: `MONTH`**
-
+<div class="plot-figure">
+  <iframe
+    src="assets/plots/anomaly_level_by_duration_missingness.html"
+    width="600"
+    height="400"
+    frameborder="0"
+  ></iframe>
+</div>
 
 <div class="plot-figure">
   <iframe
@@ -246,14 +251,7 @@ We selected `OUTAGE.DURATION` as the column of focus for further missingness ana
   ></iframe>
 </div>
 
-<div class="plot-figure">
-  <iframe
-    src="assets/plots/anomaly_level_by_duration_missingness.html"
-    width="600"
-    height="400"
-    frameborder="0"
-  ></iframe>
-</div>
+####  **Column that missingness of `OUTAGE.DURATION` does not depend on: `MONTH`**
 
 <div class="plot-figure">
   <iframe
@@ -272,6 +270,7 @@ We selected `OUTAGE.DURATION` as the column of focus for further missingness ana
     frameborder="0"
   ></iframe>
 </div>
+
 ---
 
 ## Hypothesis Testing
