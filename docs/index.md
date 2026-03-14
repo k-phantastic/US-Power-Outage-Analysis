@@ -127,7 +127,7 @@ Remainder rows found with missing data deemed irrelevant to further analysis or 
 Early exploratory data analysis is shown below through visualizations of the dataset.   
 
 ### Temporal Analysis: Number of Outages Per Year
-<div style="text-align: center;">
+<div class="plot-figure">
   <iframe
     src="assets/plots/outages_per_year_all.html"
     width="600"
@@ -138,7 +138,7 @@ Early exploratory data analysis is shown below through visualizations of the dat
 
 We find a net increase from the beginning to the end (2000-2016) in power outages, with a significant spike around 2010-2012. Further analysis with regional breakdown can be seen below: 
 
-<div style="text-align: center;">
+<div class="plot-figure">
   <iframe
     src="assets/plots/outages_per_year_by_region.html"
     width="600"
@@ -151,7 +151,7 @@ Click on region to filter analysis. Through this, we see that the Northeast regi
 
 ### Temporal Analysis: Number of Outages by Month (all years combined)
 
-<div style="text-align: center;">
+<div class="plot-figure">
   <iframe
     src="assets/plots/outages_by_month.html"
     width="600"
@@ -162,7 +162,7 @@ Click on region to filter analysis. Through this, we see that the Northeast regi
 The number of power outages seem to be heightened around the summer months with an additional, smaller peak around winter months; perhaps correlating with hurricane season in the summer and heavy snowstorms in the winter. 
 
 ### Geographic Analysis: Number of Outages by Climate Region
-<div style="text-align: center;">
+<div class="plot-figure">
   <iframe
     src="assets/plots/outages_by_climate_region.html"
     width="600"
@@ -173,7 +173,7 @@ The number of power outages seem to be heightened around the summer months with 
 Aligning with previous theory on snowstorms having a significant effect on major outage count, we find the Northeast region of the U.S. the most impacted compared to the other specified regions.
 
 ### Geographic Analysis: Top 15 States by Number of Outages
-<div style="text-align: center;">
+<div class="plot-figure">
   <iframe
     src="assets/plots/top_15_states_by_outages.html"
     width="600"
@@ -184,7 +184,7 @@ Aligning with previous theory on snowstorms having a significant effect on major
 Aggregating the top 15 states by count of outages, California is in the lead by far at 209 recorded major outages in this dataset, nearly double the next state. 
 
 ### Bivariate Analysis: Average Outage Duration vs Cause Category
-<div style="text-align: center;">
+<div class="plot-figure">
   <iframe
     src="assets/plots/outages_by_cause_category.html"
     width="800"
@@ -205,7 +205,7 @@ Power outages in the dataset are dominated in count by severe weather, but when 
 ## Assessment of Missingness
 {: #missingness }
 ====================PLACEHOLDER FOR NMAR ANALYSIS====================
-<div style="text-align: center;">
+<div class="plot-figure">
   <iframe
     src="assets/plots/duration_missingness_vs_anomaly_level.html"
     width="800"
@@ -214,7 +214,7 @@ Power outages in the dataset are dominated in count by severe weather, but when 
   ></iframe>
 </div>
 
-<div style="text-align: center;">
+<div class="plot-figure">
   <iframe
     src="assets/plots/anomaly_level_by_duration_missingness.html"
     width="600"
@@ -223,7 +223,7 @@ Power outages in the dataset are dominated in count by severe weather, but when 
   ></iframe>
 </div>
 
-<div style="text-align: center;">
+<div class="plot-figure">
   <iframe
     src="assets/plots/month_by_duration_missingness.html"
     width="600"
@@ -232,7 +232,7 @@ Power outages in the dataset are dominated in count by severe weather, but when 
   ></iframe>
 </div>
 
-<div style="text-align: center;">
+<div class="plot-figure">
   <iframe
     src="assets/plots/month_missingness_permutation_test.html"
     width="800"
@@ -258,7 +258,7 @@ Our EDA indicates that different causes may lead to varying outage durations. To
 ## Framing a Prediction Problem
 {: #prediction }
 > "Clearly state your prediction problem and type (classification or regression). If you are building a classifier, make sure to state whether you are performing binary classification or multiclass classification. Report the response variable (i.e. the variable you are predicting) and why you chose it, the metric you are using to evaluate your model and why you chose it over other suitable metrics (e.g. accuracy vs. F1-score). Note: Make sure to justify what information you would know at the “time of prediction” and to only train your model using those features. For instance, if we wanted to predict your final exam grade, we couldn’t use your Final Project grade, because the project is only due after the final exam! Feel free to ask questions if you’re not sure."
-<div style="text-align: center;">
+<div class="plot-figure">
   <iframe
     src="assets/plots/outage_duration_distribution.html"
     width="800"
@@ -279,10 +279,9 @@ Create table for features used, commentary on leakage columns we excluded.
 Maybe code snippets on the preprocessing pipelines? OHE etc
 
 
-<div style="width: 800px; height: 360px; text-align: center;">
+<div class="plot-model">
   <iframe 
     src="assets/plots/linear_regression_residuals.html" 
-    style="width: 1000px; height: 450px; transform: scale(0.8); transform-origin: 0 0; border: none;"
     scrolling="no">
   </iframe>
 </div>
@@ -306,13 +305,15 @@ Comparison of model performance, feature engineering, etc.
     <button onclick="setPlot(this, 'hist_gradient_boosting_residuals')">HGB</button>
     <button class="active" onclick="setPlot(this, 'advanced_hurdle_model_residuals_tuned')">Advanced Hurdle</button>
   </div>
-  <iframe
-    id="residuals-frame"
-    src="assets/plots/advanced_hurdle_model_residuals_tuned.html"
-    style="width: 1000px; height: 450px; transform: scale(0.8); transform-origin: 0 0; border: none;"
-    scrolling="no"
-    frameborder="0"
-  ></iframe>
+  <div class="plot-model">
+    <iframe
+      id="residuals-frame"
+      src="assets/plots/advanced_hurdle_model_residuals_tuned.html"
+      style="width: 1000px; height: 450px; transform: scale(0.8); transform-origin: 0 0; border: none;"
+      scrolling="no"
+      frameborder="0"
+    ></iframe>
+  </div>
 </div>
 <script>
   function setPlot(btn, name) {
@@ -335,9 +336,9 @@ Compare models
 | HGB Regressor (tuned)              |     1.34207 |      1.86236 |         1691.86 |          3557.68 | 0.549491 |
 | XGBoost (Optuna tuned)             |     1.36692 |      1.90019 |         1731.78 |          3663.05 | 0.531003 |
 | Advanced Hurdle (RF + XGB Stacked) |     1.38978 |      1.87048 |         1786.11 |          3850    | 0.545554 |
-| Advanced Hurdle (Optuna tuned)     |     1.3711  |      1.88919 |         1762.96 |          3679.15 | 0.536416 |
+| Advanced Hurdle (Optuna tuned)     |     1.37911 |      1.88275 |         1794.94 |          3793.87 | 0.539571 |
 
-<div style="text-align: center;">
+<div class="plot-figure">
   <iframe
     src="assets/plots/model_performance_comparison.html"
     width="850"
@@ -353,7 +354,7 @@ results_df, show what was used, etc.
 ## Fairness Analysis
 {: #fairness }
 
-<div style="text-align: center;">
+<div class="plot-figure">
   <iframe
     src="assets/plots/fairness_permutation_test.html"
     width="800"
