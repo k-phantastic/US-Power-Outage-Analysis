@@ -114,7 +114,7 @@ As preparation for the model required further imputation and feature engineering
   - `RES.PRICE` (few rows, minimal impact)
 7. **Weekend Flag** Created binary `START_ON_WEEKEND` to capture whether service recovery may be affected by reduced weekend staffing
 8. **Season Encoding** Mapped each month to its season (`Winter`, `Spring`, `Summer`, `Fall`)
-9. **Cyclical Month Encoding** Applied `np.sin()`/`np.cos()` transforms to `MONTH` to preserve the cyclical nature of weather patterns across year boundaries
+9. **Cyclical Month Encoding** Applied `np.sin()` and `np.cos()` transforms to `MONTH` to preserve the cyclical nature of weather patterns across year boundaries
 10. **Remove Outliers** Removed rows with `OUTAGE.DURATION` over 30,000 minutes (roughly 21 days)
 
 
@@ -149,6 +149,8 @@ We find a net increase from the beginning to the end (2000-2016) in power outage
 
 Click on region to filter analysis. Through this, we see that the Northeast region has the most volatile number of outages, with West North Central being significantly more flat through the years.
 
+---
+
 ### Temporal Analysis: Number of Outages by Month (all years combined)
 
 <div class="plot-figure">
@@ -159,7 +161,9 @@ Click on region to filter analysis. Through this, we see that the Northeast regi
     frameborder="0"
   ></iframe>
 </div>
-The number of power outages seem to be heightened around the summer months with an additional, smaller peak around winter months; perhaps correlating with hurricane season in the summer and heavy snowstorms in the winter. 
+The number of power outages seem to be heightened around the summer months with an additional, smaller peak around winter months; perhaps correlating with hurricane season in the summer and heavy snowstorms in the winter. We take this in consideration for building our model by incorporating month as a feature (with consideration for cyclical patterns).
+
+---
 
 ### Geographic Analysis: Number of Outages by Climate Region
 <div class="plot-figure">
@@ -172,6 +176,8 @@ The number of power outages seem to be heightened around the summer months with 
 </div>
 Aligning with previous theory on snowstorms having a significant effect on major outage count, we find the Northeast region of the U.S. the most impacted compared to the other specified regions.
 
+---
+
 ### Geographic Analysis: Top 15 States by Number of Outages
 <div class="plot-figure">
   <iframe
@@ -182,6 +188,8 @@ Aligning with previous theory on snowstorms having a significant effect on major
   ></iframe>
 </div>
 Aggregating the top 15 states by count of outages, California is in the lead by far at 209 recorded major outages in this dataset, nearly double the next state. 
+
+---
 
 ### Bivariate Analysis: Average Outage Duration vs Cause Category
 <div class="plot-figure">
@@ -194,17 +202,41 @@ Aggregating the top 15 states by count of outages, California is in the lead by 
 </div>
 Power outages in the dataset are dominated in count by severe weather, but when we look at the longest average power outages, we find that the main contributing cause category is fuel supply emergencies, at almost 5 times more than that of severe weather outages. 
 
+---
 
-### Pivot Table: Average Outage Duration by Cause Category and Climate Region
+### Pivot Table: Average Outage Duration by Cause Category and Climate Region     
+
 <div style="transform: scale(0.75); transform-origin: top left; width: 133%;">
   {% include_relative assets/plots/pivot_table.html %}
 </div>
+
+The table gives us a multi-layer understanding on how climate region and outage cause can be key indicators for outages. It does help us understand the potential for outliers and the presence of a skewed wide range of values. We explore the distribution of outage durations in the chart [here](#framing-a-prediction-problem).
 
 ---
 
 ## Assessment of Missingness
 {: #missingness }
-====================PLACEHOLDER FOR NMAR ANALYSIS====================
+
+### NMAR Analysis   
+
+We believe `CAUSE.CATEGORY.DETAIL` is a plausible **NMAR** (Not Missing At Random) column. This variable provides a more specific description of the outage cause -for example, `"Thunderstorm"` or `"Tornado"` within the broader `"severe weather"` category (`CAUSE.CATEGORY`). 
+
+Given its many missing values, it's possible that a detail is omitted depending on the detail itself. For instance, utilities companies may be less likely to report a specific cause when it is operationally embarrassing (suggestive of internal negligence), legally sensitive, or potentially that there are far too many causes for one specific key-detail to be identified. In that case, the missingness would depend on the unobserved value that should have appeared in the column. 
+
+A more educated evaluation would require more domain knowledge regarding the nature of power outages and infrastructure reporting. 
+
+---
+
+### Missingness Dependency
+
+We selected `OUTAGE.DURATION` as the column of focus for further missingness analysis, as it is our target for modeling. We created a binary indicator `duration_missing` and ran permutation tests against two candidate columns: 
+
+####  **Column that missingness of `OUTAGE.DURATION` depends on: `CLIMATE.REGION`**
+
+
+####  **Column that missingness of `OUTAGE.DURATION` does not depend on: `MONTH`**
+
+
 <div class="plot-figure">
   <iframe
     src="assets/plots/duration_missingness_vs_anomaly_level.html"
@@ -309,7 +341,6 @@ Comparison of model performance, feature engineering, etc.
     <iframe
       id="residuals-frame"
       src="assets/plots/advanced_hurdle_model_residuals_tuned.html"
-      style="width: 1000px; height: 450px; transform: scale(0.8); transform-origin: 0 0; border: none;"
       scrolling="no"
       frameborder="0"
     ></iframe>
