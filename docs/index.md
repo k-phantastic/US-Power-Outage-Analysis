@@ -62,7 +62,7 @@ has_toc: false
     <p>
       The dataset contains <strong>1,534 rows</strong> for each major outage event and <a href="https://www.sciencedirect.com/science/article/pii/S2352340918307182?via%3Dihub#s0015" target="_blank">55 columns</a>
       spanning outage event details, regional statistics, climate information, consumption information, and economic indicators.
-      Full data covers from January 2000 through July 2016. Selected column features seen <a href="#featureengineering">here</a>. 
+      Full data covers from January 2000 through July 2016. Selected column features seen <a href="#features">here</a>. 
     </p>
   </div>
 </div>
@@ -206,11 +206,11 @@ Power outages in the dataset are dominated in count by severe weather, but when 
 
 ### Pivot Table: Average Outage Duration by Cause Category and Climate Region     
 
-<div style="transform: scale(0.75); transform-origin: top left; width: 133%;">
+<div style="transform: scale(0.75); transform-origin: top left; width: 133%; margin-bottom: -10%;">
   {% include_relative assets/plots/pivot_table.html %}
 </div>
 
-The table gives us a multi-layer understanding on how climate region and outage cause can be key indicators for outages. It does help us understand the potential for outliers and the presence of a skewed wide range of values. We explore the distribution of outage durations in the chart [here](#framing-a-prediction-problem).
+The table gives us a multi-layer understanding on how climate region and outage cause can be key indicators for outages. It does help us understand the potential for outliers and the presence of a skewed wide range of values. We explore the distribution of outage durations in the chart [here](#prediction).
 
 ---
 
@@ -333,7 +333,7 @@ While our permutation test suggested that outage causes are independent of clima
 ## Framing a Prediction Problem
 {: #prediction }
 
-Our study so far has lead us in framing our prediction problem as a **regression** task to predict the duration of a a power outage (`OUTAGE.DURATION`), given its early statistics and information when the incident occurs (discussed further detail in [#features](#features)). The duration of an outage provides an actionable metric for utility companies, emergency responders, and especially resident customers. 
+Our study so far has lead us in framing our prediction problem as a **regression** task to predict the duration of a a power outage (`OUTAGE.DURATION`), given its early statistics and information when the incident occurs (discussed further detail [below](#features)). The duration of an outage provides an actionable metric for utility companies, emergency responders, and especially resident customers. 
 
 At the time of prediction, we will ensure to only use features that would be known when the outage is reported, such as location, date/time, climate conditions, and economic context (aggregated and known prior, specific to region). A key column to avoid is `DEMAND.LOSS.MW`, as it is calculated after restoration and would contribute to data leakage.
 
@@ -381,9 +381,9 @@ Following our data cleaning and feature engineering, our modeling approach uses 
 | `UTIL.CONTRI` | Quantitative | Utility industry contribution to state GDP | States where utilities are a larger economic factor may invest more in rapid restoration |
 | `PI.UTIL.OFUSA` | Quantitative | State utility sector's income of U.S. utility sector's income | Additional reflection of utility scale and resource capacity |
 
-**7 nominal/categorical** features were encoded in the preprocessing pipeline with `OneHotEncoder(handle_unknown='ignore')`   
-**10 quantitative** features were standardized with `StandardScaler()`    
-**Train/Test** split of 80:20 (1159 training rows, 290 test rows)   
+* **7 nominal/categorical** features were encoded in the preprocessing pipeline with `OneHotEncoder(handle_unknown='ignore')`   
+* **10 quantitative** features were standardized with `StandardScaler()`    
+* **Train and Test split** of 80:20 (1159 training rows, 290 test rows)   
 
 {: #baseline }
 ### Baseline Model: Linear Regression
@@ -494,13 +494,13 @@ Our approach for the model's fairness analysis will be comparing its performance
 > **Group X (Urban):** States where `POPPCT_URBAN` > 84.05%: 162 test observations  
 > **Group Y (Rural):** States where `POPPCT_URBAN` < 84.05%: 128 test observations  
 >**Null Hypothesis (H<sub>0</sub>):** Our model is fair with respect to urban states and rural states, and any observed difference (in RMSE) is due to random chance.   
->**Alternative Hypothesis (H<sub>A</sub>):**  Our model is unfair with respect to urban states and rural states. The RMSE differs significantly between urban and rural states. 
+>**Alternative Hypothesis (H<sub>A</sub>):**  Our model is unfair with respect to urban states and rural states. The RMSE differs significantly between urban and rural states.     
 >**Test Statistic:** Absolute difference in the group means of `RMSE`, with significance value of 0.05   
 
 We will be using the Advanced Hurdle as our model of analysis, but the fairness analysis code is scalable for each model used. 
 
-**Observed Differences:**
-MAE is included for interpretability's sake
+**Observed Differences:**   
+(MAE is included for interpretability's sake)
 
 | Group | RMSE | MAE | Num. Observations |
 |---|---|---|---|
@@ -528,17 +528,21 @@ Because the model was trained on log-transformed outage duration but evaluated h
 
 ### Conclusion
 {: #conclusion }
-Major insights from the project, key limitations, and the next steps you would take
 
 With the completion of the study, we were able to find ways to substantially outperform the baseline (albeit a very naive one) with each further tested model. The Random Forest model was our recommended final model in achieving overall best results across each metric. The advanced hurdle model, while key in intuition at approaching the problem, did not ourperform in it's current iteration- we will need to do more analysis on the gating of lower duration outages. 
 
-Power outages, given the advances in infrastructure, regulation, and mitigating weather are inherent outliers. 
+Power outages, given the advances in infrastructure, regulation, and mitigating weather are inherent outliers. We were able to indeed the duration of a power outage, but with clear limitations affecting performance at hand: 
+- **Dataset Size:** Started with only 1534 rows (1449 after cleaning and engineering) 
+- **Limited Feature Metrics:** We do not have access to details such as how many of the workforce are available for repairs, specific equipment damage (perhaps certain equipment being damaged takes longer for repair than others)
+- **Temporal Drift:** Dataset is limited to a 16 year span in the past, and we do not have the context for quantifying improvements in infrastructure or funding over time. (e.g. the exact same outage in 2000 might last longer/shorter than one of the same details occuring in 2016)
+
+In brainstorming additional steps in the future could be different sampling methods or usage of synthetic data (although this might be harder to capture change over time in both climate and infrastructure). Different data mining techniques could be employed in gathering more datapoints or more details per observation. Quicker wins otherwise would be to continue to iteratively improve upon the models we have at hand: whether it is changing the archetecture of the advanced hurdle model or a more comprehensive hyperparameter search. 
 
 ---
 
 ## References
 {: #references }
-====================PLACEHOLDER====================   
-Add in the links used for data source, properly cite etc
+**Source:** [https://engineering.purdue.edu/LASCI/research-data/outages/](https://engineering.purdue.edu/LASCI/research-data/outages/)          
+**Data Dictionary:** [https://www.sciencedirect.com/science/article/pii/S2352340918307182?via%3Dihub#t0005](https://www.sciencedirect.com/science/article/pii/S2352340918307182?via%3Dihub#t0005)
 
 {% include scroll.html %}
