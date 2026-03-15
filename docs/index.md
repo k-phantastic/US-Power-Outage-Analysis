@@ -332,7 +332,6 @@ While our permutation test suggested that outage causes are independent of clima
 
 ## Framing a Prediction Problem
 {: #prediction }
-> "Clearly state your prediction problem and type (classification or regression). If you are building a classifier, make sure to state whether you are performing binary classification or multiclass classification. Report the response variable (i.e. the variable you are predicting) and why you chose it, the metric you are using to evaluate your model and why you chose it over other suitable metrics (e.g. accuracy vs. F1-score). Note: Make sure to justify what information you would know at the “time of prediction” and to only train your model using those features. For instance, if we wanted to predict your final exam grade, we couldn’t use your Final Project grade, because the project is only due after the final exam! Feel free to ask questions if you’re not sure."
 
 Our study so far has lead us in framing our prediction problem as a **regression** task to predict the duration of a a power outage (`OUTAGE.DURATION`), given its early statistics and information when the incident occurs (discussed further detail in [#features](#features)). The duration of an outage provides an actionable metric for utility companies, emergency responders, and especially resident customers. 
 
@@ -389,7 +388,12 @@ Following our data cleaning and feature engineering, our modeling approach uses 
 {: #baseline }
 ### Baseline Model: Linear Regression
 
-Upon training and testing a 
+Upon training and testing a simple `LinearRegression()` model, with results as follows: 
+
+| Model                              |   MAE (log) |   RMSE (log) |   MAE (minutes) |   RMSE (minutes) |      R^2 |
+|:-----------------------------------|------------:|-------------:|----------------:|-----------------:|---------:|
+| Linear Regression (Baseline)       |     1.46448 |      1.92543 |         1812.06 |          4378    | 0.518461 |
+
 <div class="plot-model">
   <iframe 
     src="assets/plots/linear_regression_residuals.html" 
@@ -397,8 +401,7 @@ Upon training and testing a
   </iframe>
 </div>
 
-Discussion section for baseline model
-Comparison of model performance, feature engineering, etc.
+With an R^2 of 0.52, our baseline captures roughly half of the variance in outage duration. High RMSE reflects difficulties in the prediction of longer duration events. An average difference of 1,812 minutes translates to over a 1.25 days! The residual plots show clear outliers strongly affecting the data  and distinct patterns suggesting poorer performance. While the performance is not great, we see upon trying more robust models that it's an ultimately difficult prediction task with the scarce amount of data available. 
 
 ---
 
@@ -406,6 +409,39 @@ Comparison of model performance, feature engineering, etc.
 ## Final Model
 {: #finalmodel }
 
+Our further testing in selecting a final model included testing Ridge Regression, Random Forest Regression, XGBoost, and HistGradientBoostingRegressor from `sklearn`. With each of these, we used `RandomSearchCV` (n=1000, 3-fold CV) for hyperparameter tuning. 
+
+We found that tree models were better in that they were able to capture non-linear patterns, to which we engineered an additional model upon that intuition: a two-stage hurdle model (Referenced as `Advanced Hurdle` in below discussion) that uses Random Forest Classifier to predict the probability of an outage being significant enough to have a duration, then feeds that probability as a new feature into an XGBoost Regressor.
+
+In determining the hyperparameter space for the initial XGBoost portion of the Advanced Hurdle model as well as the final operating hyperparameters, we used Optuna to fit 1000 trials. Further information in regarding the hyperparameters can be referenced in the jupyter notebook. 
+
+---
+
+### Final Results
+
+| Model                              |   MAE (log) |   RMSE (log) |   MAE (minutes) |   RMSE (minutes) |      R^2 |
+|:-----------------------------------|------------:|-------------:|----------------:|-----------------:|---------:|
+| Linear Regression (Baseline)       |     1.46448 |      1.92543 |         1812.06 |          4378    | 0.518461 |
+| Ridge Regression (tuned)           |     1.47886 |      1.91423 |         1802.69 |          3925.18 | 0.524049 |
+| Random Forest Regressor (tuned)    |     1.33684 |      1.82861 |         1739.02 |          3719.7  | 0.565669 |
+| XGBoost Regressor (tuned)          |     1.37451 |      1.89939 |         1755.67 |          3729.29 | 0.531397 |
+| HGB Regressor (tuned)              |     1.34207 |      1.86236 |         1691.86 |          3557.68 | 0.549491 |
+| XGBoost (Optuna tuned)             |     1.36692 |      1.90019 |         1731.78 |          3663.05 | 0.531003 |
+| Advanced Hurdle (RF + XGB Stacked) |     1.38978 |      1.87048 |         1786.11 |          3850    | 0.545554 |
+| Advanced Hurdle (Optuna tuned)     |     1.37911 |      1.88275 |         1794.94 |          3793.87 | 0.539571 |
+
+The raw table of results can be seen above, with the visualization for it below: 
+
+<div class="plot-figure">
+  <iframe
+    src="assets/plots/model_performance_comparison.html"
+    width="850"
+    height="550"
+    frameborder="0"
+  ></iframe>
+</div>
+
+Additional exploration of residuals for each model can be selected as follows: 
 <!-- Band-aid fix for plot selector -->
 <div class="plot-selector" style="text-align: center;">
   <div style="margin-bottom: 0.5rem;">
@@ -414,7 +450,7 @@ Comparison of model performance, feature engineering, etc.
     <button onclick="setPlot(this, 'random_forest_residuals')">Random Forest</button>
     <button onclick="setPlot(this, 'xgboost_optuna_residuals')">XGBoost</button>
     <button onclick="setPlot(this, 'hist_gradient_boosting_residuals')">HGB</button>
-    <button class="active" onclick="setPlot(this, 'advanced_hurdle_model_residuals_tuned')">Advanced Hurdle (FINAL)</button>
+    <button class="active" onclick="setPlot(this, 'advanced_hurdle_model_residuals_tuned')">Advanced Hurdle</button>
   </div>
   <div class="plot-model">
     <iframe
@@ -433,36 +469,47 @@ Comparison of model performance, feature engineering, etc.
   }
 </script>
 
-Compare models
 
-### Results DF
+---
 
-| Model                              |   MAE (log) |   RMSE (log) |   MAE (minutes) |   RMSE (minutes) |      R^2 |
-|:-----------------------------------|------------:|-------------:|----------------:|-----------------:|---------:|
-| Linear Regression (Baseline)       |     1.46448 |      1.92543 |         1812.06 |          4378    | 0.518461 |
-| Ridge Regression (tuned)           |     1.47886 |      1.91423 |         1802.69 |          3925.18 | 0.524049 |
-| Random Forest Regressor (tuned)    |     1.33684 |      1.82861 |         1739.02 |          3719.7  | 0.565669 |
-| XGBoost Regressor (tuned)          |     1.37451 |      1.89939 |         1755.67 |          3729.29 | 0.531397 |
-| HGB Regressor (tuned)              |     1.34207 |      1.86236 |         1691.86 |          3557.68 | 0.549491 |
-| XGBoost (Optuna tuned)             |     1.36692 |      1.90019 |         1731.78 |          3663.05 | 0.531003 |
-| Advanced Hurdle (RF + XGB Stacked) |     1.38978 |      1.87048 |         1786.11 |          3850    | 0.545554 |
-| Advanced Hurdle (Optuna tuned)     |     1.37911 |      1.88275 |         1794.94 |          3793.87 | 0.539571 |
+### Recommendation and Comparison to baseline
+Our final recommended model is the tuned **Random Forest Regressor**, in which it was the top performer in log MAE, log RMSE, and R^2; however, we hypothesis that further engineering and tuning of the Advance Hurdle model has potential to overtake it in performance. As seen below, we were able to improve upon each of our metrics with the final model
 
-<div class="plot-figure">
-  <iframe
-    src="assets/plots/model_performance_comparison.html"
-    width="850"
-    height="550"
-    frameborder="0"
-  ></iframe>
-</div>
+| Metric         |   Linear Regression (Baseline) |   Random Forest Regressor (tuned) |   Absolute Improvement | % Improvement   |
+|:---------------|-------------------------------:|----------------------------------:|-----------------------:|:----------------|
+| MAE (log)      |                       1.46448  |                          1.33684  |              0.127637  | +8.7%           |
+| RMSE (log)     |                       1.92543  |                          1.82861  |              0.0968146 | +5.0%           |
+| MAE (minutes)  |                    1812.06     |                       1739.02     |             73.0343    | +4.0%           |
+| RMSE (minutes) |                    4378        |                       3719.7      |            658.295     | +15.0%          |
+| R^2            |                       0.518461 |                          0.565669 |              0.0472081 | +9.1%           |
 
-results_df, show what was used, etc. 
 
 ---
 
 ## Fairness Analysis
 {: #fairness }
+
+Our approach for the model's fairness analysis will be comparing its performance in urban vs. rural states. These regional classifications can be an indirect indicator of access to resources. We will quantify "urban states" as those where the `POPPCT_URBAN` (Percentage of the total population of the U.S. state represented by the urban population (in %)) is above the test set median, with "rural states" being below the median. 
+
+> **Group X (Urban):** States where `POPPCT_URBAN` > 84.05%: 162 test observations  
+> **Group Y (Rural):** States where `POPPCT_URBAN` < 84.05%: 128 test observations  
+>**Null Hypothesis (H<sub>0</sub>):** Our model is fair with respect to urban states and rural states, and any observed difference (in RMSE) is due to random chance.   
+>**Alternative Hypothesis (H<sub>A</sub>):**  Our model is unfair with respect to urban states and rural states. The RMSE differs significantly between urban and rural states. 
+>**Test Statistic:** Absolute difference in the group means of `RMSE`, with significance value of 0.05   
+
+We will be using the Advanced Hurdle as our model of analysis, but the fairness analysis code is scalable for each model used. 
+
+**Observed Differences:**
+MAE is included for interpretability's sake
+
+| Group | RMSE | MAE | Num. Observations |
+|---|---|---|---|
+| Urban | 4024 min | 1811 min | 162 |
+| Rural  | 3481 min | 1774 min | 128 |
+| Observed Difference | **543 min** | 37 min |  |
+
+Upon a completed permutation test (n = 1000) and significance value of 0.05, our results are as follows:     
+**Result:** P-value = **0.5080**
 
 <div class="plot-figure">
   <iframe
@@ -472,13 +519,20 @@ results_df, show what was used, etc.
     frameborder="0"
   ></iframe>
 </div>
-Urban vs Rural
+
+The above visualization shows the results of our permutation test and where the observed differences. Given our significance level of 0.05 and the p-value of 0.5080, we do not have sufficient evidence to conclude that the model is less fair for rural states.
+
+Because the model was trained on log-transformed outage duration but evaluated here on the original minutes scale, this fairness result reflects real-world prediction error in outage duration.
+
+---
 
 ### Conclusion
 {: #conclusion }
-====================PLACEHOLDER====================   
-
 Major insights from the project, key limitations, and the next steps you would take
+
+With the completion of the study, we were able to find ways to substantially outperform the baseline (albeit a very naive one) with each further tested model. The Random Forest model was our recommended final model in achieving overall best results across each metric. The advanced hurdle model, while key in intuition at approaching the problem, did not ourperform in it's current iteration- we will need to do more analysis on the gating of lower duration outages. 
+
+Power outages, given the advances in infrastructure, regulation, and mitigating weather are inherent outliers. 
 
 ---
 
