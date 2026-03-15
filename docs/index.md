@@ -527,7 +527,7 @@ Because the model was trained on log-transformed outage duration but evaluated h
 
 ---
 
-### Conclusion
+## Conclusion
 {: #conclusion }
 
 With the completion of the study, we were able to find ways to substantially outperform the baseline (albeit a very naive one) with each further tested model. The Random Forest model was our recommended final model in achieving overall best results across each metric. The advanced hurdle model, while key in intuition at approaching the problem, did not outperform in it's current iteration- we will need to do more analysis on the gating of lower duration outages. 
