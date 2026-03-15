@@ -15,6 +15,7 @@ has_toc: false
   <a href="#baseline">Baseline Model</a>
   <a href="#finalmodel">Final Model</a>
   <a href="#fairness">Fairness Analysis</a>
+  <a href="#conclusion">Conclusion</a>
   <a href="#references">References</a>
 </nav>
 
@@ -359,7 +360,7 @@ Given the heavy right skew of power outage durations- with most lasting far less
 ---
 
 ## Baseline Model
-
+{: #baseline }
 {: #features }
 
 ### Model Features
@@ -386,7 +387,6 @@ Following our data cleaning and feature engineering, our modeling approach uses 
 * **10 quantitative** features were standardized with `StandardScaler()`    
 * **Train and Test split** of 80:20 (1159 training rows, 290 test rows)   
 
-{: #baseline }
 ### Baseline Model: Linear Regression
 
 Upon training and testing a simple `LinearRegression()` model, with results as follows: 
