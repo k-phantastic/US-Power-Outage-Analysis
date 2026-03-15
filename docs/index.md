@@ -99,6 +99,7 @@ The raw outage data required substantial cleaning before analysis. As the raw Ex
 2. **Fixing Data Types** Reestablished datetime columns, integers, and floats from default object typing
 3. **Date and Time Combination** Combined `OUTAGE.START.DATE` + `OUTAGE.START.TIME` into `OUTAGE.START`, and `OUTAGE.RESTORATION.DATE` + `OUTAGE.RESTORATION.TIME` into `OUTAGE.RESTORATION`
 4. **Adding Month Names** Converted numerical 1–12 encoding into month abbreviations for EDA readability
+
 As preparation for the model required further imputation and feature engineering, a subsequent round of cleaning was applied:
 
 **Round 2: Model Preparation (Performed after <a href="#missingness">Assessment of Missingness</a>)**
@@ -256,7 +257,7 @@ At a glance, we find that anomaly levels are heightened when outage durations ar
 </div>
 
 We perform a permutation as follows in evaluating missingness dependency: 
->**Null Hypothesis (H<sub>0</sub>):** The missingness of `OUTAGE.DURATION` is independent of `CLIMATE.REGION`.   
+>**Null Hypothesis (H<sub>0</sub>):** The missingness of `OUTAGE.DURATION` is independent of `ANOMALY.LEVEL`.   
 >**Alternative Hypothesis (H<sub>A</sub>):** The distribution of `ANOMALY.LEVEL` differs in mean in rows where `OUTAGE.DURATION` is missing      
 >**Test Statistic:** Absolute difference in group means of `ANOMALY.LEVEL`    
 
@@ -321,7 +322,7 @@ We have a CLIMATE.CATEGORY column (warm, cold, normal) and a `CAUSE.CATEGORY` co
 
 >**Null Hypothesis (H<sub>0</sub>):** The distribution of outage causes is independent of the climate category (warm vs. cold).
 >**Alternative Hypothesis (H<sub>A</sub>):** The distribution of outage causes depends on the climate category (e.g., certain causes are more likely in cold climates vs. warm climates).   
->**Test Statistic:** Total Variation Distance (TVD) comparing distributino of `CAUSE.CATEGORY` between warm and cold climate outages
+>**Test Statistic:** Total Variation Distance (TVD) comparing distribution of `CAUSE.CATEGORY` between warm and cold climate outages
 
 Upon a completed permutation test (n = 1000) and significance value of 0.05, our results are as follows:     
 **Result:** Observed TVD = **0.0646**, P-value = **0.3260**
@@ -497,7 +498,7 @@ Our approach for the model's fairness analysis will be comparing its performance
 >**Alternative Hypothesis (H<sub>A</sub>):**  Our model is unfair with respect to urban states and rural states. The RMSE differs significantly between urban and rural states.     
 >**Test Statistic:** Absolute difference in the group means of `RMSE`, with significance value of 0.05   
 
-We will be using the Advanced Hurdle as our model of analysis, but the fairness analysis code is scalable for each model used. 
+We will be using the Advanced Hurdle as our model of analysis as it is our most archetecturally novel, but the fairness analysis code is scalable for each model used. 
 
 **Observed Differences:**   
 (MAE is included for interpretability's sake)
@@ -529,9 +530,9 @@ Because the model was trained on log-transformed outage duration but evaluated h
 ### Conclusion
 {: #conclusion }
 
-With the completion of the study, we were able to find ways to substantially outperform the baseline (albeit a very naive one) with each further tested model. The Random Forest model was our recommended final model in achieving overall best results across each metric. The advanced hurdle model, while key in intuition at approaching the problem, did not ourperform in it's current iteration- we will need to do more analysis on the gating of lower duration outages. 
+With the completion of the study, we were able to find ways to substantially outperform the baseline (albeit a very naive one) with each further tested model. The Random Forest model was our recommended final model in achieving overall best results across each metric. The advanced hurdle model, while key in intuition at approaching the problem, did not outperform in it's current iteration- we will need to do more analysis on the gating of lower duration outages. 
 
-Power outages, given the advances in infrastructure, regulation, and mitigating weather are inherent outliers. We were able to indeed the duration of a power outage, but with clear limitations affecting performance at hand: 
+Power outages are inherently difficult to predict; they are rare, high-variance events shaped by factors that precede, coincide with, and follow the incident itself. We were able to indeed predict the duration of a power outage, but with clear limitations affecting performance at hand: 
 - **Dataset Size:** Started with only 1534 rows (1449 after cleaning and engineering) 
 - **Limited Feature Metrics:** We do not have access to details such as how many of the workforce are available for repairs, specific equipment damage (perhaps certain equipment being damaged takes longer for repair than others)
 - **Temporal Drift:** Dataset is limited to a 16 year span in the past, and we do not have the context for quantifying improvements in infrastructure or funding over time. (e.g. the exact same outage in 2000 might last longer/shorter than one of the same details occuring in 2016)
@@ -544,5 +545,6 @@ In brainstorming additional steps in the future could be different sampling meth
 {: #references }
 **Source:** [https://engineering.purdue.edu/LASCI/research-data/outages/](https://engineering.purdue.edu/LASCI/research-data/outages/)          
 **Data Dictionary:** [https://www.sciencedirect.com/science/article/pii/S2352340918307182?via%3Dihub#t0005](https://www.sciencedirect.com/science/article/pii/S2352340918307182?via%3Dihub#t0005)
+**Software:** scikit-learn, XGBoost, Optuna, Plotly, matplotlib, pandas, NumPy
 
 {% include scroll.html %}
