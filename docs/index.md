@@ -189,7 +189,18 @@ Aligning with previous theory on snowstorms having a significant effect on major
     frameborder="0"
   ></iframe>
 </div>
-Aggregating the top 15 states by count of outages, California is in the lead by far at 209 recorded major outages in this dataset, nearly double the next state. 
+Aggregating the top 15 states by count of outages, California is in the lead by far at 209 recorded major outages in this dataset, nearly double the next state.
+
+Additional geographical information can be seen in the plot below by outage count and duration: 
+
+<div class="plot-figure">
+  <iframe
+    src="assets/plots/state_level_outage_stats.html"
+    width="800"
+    height="400"
+    frameborder="0"
+  ></iframe>
+</div>
 
 ---
 
@@ -544,7 +555,7 @@ In brainstorming additional steps in the future could be different sampling meth
 ## References
 {: #references }
 **Source:** [https://engineering.purdue.edu/LASCI/research-data/outages/](https://engineering.purdue.edu/LASCI/research-data/outages/)          
-**Data Dictionary:** [https://www.sciencedirect.com/science/article/pii/S2352340918307182?via%3Dihub#t0005](https://www.sciencedirect.com/science/article/pii/S2352340918307182?via%3Dihub#t0005)
+**Data Dictionary:** [https://www.sciencedirect.com/science/article/pii/S2352340918307182?via%3Dihub#t0005](https://www.sciencedirect.com/science/article/pii/S2352340918307182?via%3Dihub#t0005)   
 **Software:** scikit-learn, XGBoost, Optuna, Plotly, matplotlib, pandas, NumPy
 
 {% include scroll.html %}
